@@ -3,15 +3,16 @@
     <PreferenceCategory app:title="@string/nfc_header">
 
         <SwitchPreferenceCompat
-            app:key="sync"
-            app:title="@string/activation_title" />
+            app:key="activation"
+            app:title="@string/activation_title"
+            app:defaultValue="false"/>
 
         <ListPreference
-            app:defaultValue="reply"
+            app:key="duration"
+            app:title="@string/duration_title"
+            app:defaultValue="0"
             app:entries="@array/reply_entries"
             app:entryValues="@array/reply_values"
-            app:key="reply"
-            app:title="@string/duration_title"
             app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
