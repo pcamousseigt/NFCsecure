@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.patricecamousseigt.nfcsecure">
 
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.NFCsecure">
+
         <activity
             android:name=".SettingsActivity"
             android:exported="true"
@@ -19,6 +22,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".NfcService"
+            android:enabled="true"
+            android:exported="false"/>
+
+        <receiver
+            android:name=".NfcStateReceiver"
+            android:enabled="true"
+            android:exported="false"/>
     </application>
 
 </manifest>

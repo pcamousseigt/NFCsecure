@@ -1,6 +1,6 @@
 package com.patricecamousseigt.nfcsecure
 
-import android.content.res.Configuration
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +14,8 @@ class SettingsActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction().replace(R.id.settings, SettingsFragment()).commit()
         }
+
+        //startService(Intent(this, NfcService::class.java))
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {
