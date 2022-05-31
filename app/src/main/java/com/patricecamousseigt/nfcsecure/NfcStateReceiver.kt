@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.nfc.NfcAdapter
 import android.util.Log
+import android.widget.Toast
 
 class NfcStateReceiver : BroadcastReceiver() {
 
@@ -19,7 +20,8 @@ class NfcStateReceiver : BroadcastReceiver() {
                 NfcAdapter.STATE_TURNING_ON -> {
                     // Do something
                     Log.i("[NFCsecure]", "Nfc state turning on.")
-                    //applicationContext.getSharedPreferences().findPreference<SwitchPreferenceCompat>("activation")
+                    val duration = context?.getSharedPreferences(Const.NAME, Context.MODE_PRIVATE)?.getInt(Const.DURATION, 0)
+                    Toast.makeText(context, "duration : $duration", Toast.LENGTH_SHORT).show()
                 }
             }
         }

@@ -19,7 +19,9 @@ class NfcService: Service() {
         return null
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+    override fun onCreate() {
+        super.onCreate()
+
         Log.i("[NFCsecure]","Service running in the background.")
 
         // we need this wake lock so our service gets not affected by Doze Mode
@@ -29,7 +31,9 @@ class NfcService: Service() {
 
         // Register the broadcast receiver
         this.registerReceiver(nfcStateReceiver, IntentFilter(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED))
+    }
 
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         // make sure the service is restarted if the system kills the service
         return START_STICKY
     }
@@ -37,13 +41,17 @@ class NfcService: Service() {
     override fun onDestroy() {
         Log.i("[NFCsecure]","Service onDestroy.")
 
-        super.onDestroy()
-
-        // Remove the broadcast listener
-        this.unregisterReceiver(nfcStateReceiver);
+        try {
+            // Remove the broadcast listener
+            this.unregisterReceiver(nfcStateReceiver)
+        } catch (e: Exception) {
+            Log.e("[NFCsecure]", "Error : $e")
+        }
 
         // release the wakelock
         wakeLock?.release()
+
+        super.onDestroy()
     }
 
 }

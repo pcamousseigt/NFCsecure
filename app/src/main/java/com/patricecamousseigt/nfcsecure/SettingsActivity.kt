@@ -1,10 +1,14 @@
 package com.patricecamousseigt.nfcsecure
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.*
+import java.lang.Exception
+import kotlin.reflect.typeOf
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -23,15 +27,32 @@ class SettingsActivity : AppCompatActivity() {
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
 
-            val switchPreferenceCompat = findPreference<SwitchPreferenceCompat>("activation")
-            switchPreferenceCompat?.setOnPreferenceChangeListener { preference, newValue ->
-                Toast.makeText(context, newValue.toString(), Toast.LENGTH_SHORT).show()
+            val switchPreference = findPreference<SwitchPreferenceCompat>("activation")
+            switchPreference?.setOnPreferenceChangeListener { preference, newValue ->
+                try {
+                    val activation = newValue as Boolean
+
+                    context?.getSharedPreferences(Const.NAME, MODE_PRIVATE)?.edit()?.putBoolean(Const.ACTIVATION, activation)?.apply()
+
+                    if (activation) { activity?.startService(Intent(activity, NfcService::class.java)) }
+                    else { activity?.stopService(Intent(activity, NfcService::class.java)) }
+
+                    Toast.makeText(context, activation.toString(), Toast.LENGTH_SHORT).show()
+                } catch (e: Exception) {
+                    Log.e("[NFCsecure]", "Error : $e")
+                }
                 true
             }
 
             val listPreference = findPreference<ListPreference>("duration")
             listPreference?.setOnPreferenceChangeListener { preference, newValue ->
-                Toast.makeText(context, newValue.toString(), Toast.LENGTH_SHORT).show()
+                try {
+                    val duration = (newValue as String).toInt()
+                    context?.getSharedPreferences(Const.NAME, Context.MODE_PRIVATE)?.edit()?.putInt(Const.DURATION, duration)?.apply()
+                    Toast.makeText(context, duration.toString(), Toast.LENGTH_SHORT).show()
+                } catch (e: Exception) {
+                    Log.e("[NFCsecure]", "Error : $e")
+                }
                 true
             }
         }
