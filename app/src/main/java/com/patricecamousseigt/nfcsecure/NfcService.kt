@@ -6,7 +6,6 @@ import android.os.IBinder
 import android.os.PowerManager
 import android.util.Log
 import android.nfc.NfcAdapter
-import androidx.preference.SwitchPreferenceCompat
 
 
 class NfcService: Service() {
@@ -32,9 +31,10 @@ class NfcService: Service() {
         }
 
         // register the broadcast receiver
-        this.registerReceiver(nfcStateReceiver, IntentFilter(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED))
+        registerReceiver(nfcStateReceiver, IntentFilter(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED))
 
-        if(NfcState(applicationContext).isEnabled()) {
+        val nfcEnabled = NfcState(applicationContext).isEnabled()
+        if(nfcEnabled) {
             // launch manually the receiver if the nfc is already enabled
             nfcStateReceiver?.execute(applicationContext, NfcAdapter.STATE_ON)
         }
@@ -50,11 +50,11 @@ class NfcService: Service() {
 
         try {
             // remove the broadcast listener
-            this.unregisterReceiver(nfcStateReceiver)
+            unregisterReceiver(nfcStateReceiver)
         } catch (e: Exception) {
             Log.e("[NFCsecure]", "Error : $e")
         }
-        
+
         // remove manually a potential alarm scheduled
         nfcStateReceiver?.cancelNotificationIntent(applicationContext)
 

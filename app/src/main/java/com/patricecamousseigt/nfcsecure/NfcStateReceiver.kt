@@ -5,14 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.nfc.NfcAdapter
 import android.util.Log
-import android.widget.Toast
 import android.app.AlarmManager
-
-import androidx.core.content.ContextCompat.getSystemService
-
 import android.app.PendingIntent
-import kotlin.time.Duration.Companion.milliseconds
-
 
 class NfcStateReceiver : BroadcastReceiver() {
 
