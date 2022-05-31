@@ -6,6 +6,13 @@ import android.content.Intent
 import android.nfc.NfcAdapter
 import android.util.Log
 import android.widget.Toast
+import android.app.AlarmManager
+
+import androidx.core.content.ContextCompat.getSystemService
+
+import android.app.PendingIntent
+import kotlin.time.Duration.Companion.milliseconds
+
 
 class NfcStateReceiver : BroadcastReceiver() {
 
@@ -21,13 +28,31 @@ class NfcStateReceiver : BroadcastReceiver() {
         when (state) {
             NfcAdapter.STATE_OFF -> { Log.i("[NFCsecure]", "Nfc state disabled.") }
             NfcAdapter.STATE_TURNING_OFF -> { Log.i("[NFCsecure]", "Nfc state turning off.") }
-            NfcAdapter.STATE_ON -> { Log.i("[NFCsecure]", "Nfc state enabled.") }
-            NfcAdapter.STATE_TURNING_ON -> {
-                // Do something
-                Log.i("[NFCsecure]", "Nfc state turning on.")
-                val duration = context?.getSharedPreferences(Const.NAME, Context.MODE_PRIVATE)?.getInt(Const.DURATION, 0)
-                Toast.makeText(context, "duration : $duration", Toast.LENGTH_SHORT).show()
+            NfcAdapter.STATE_TURNING_ON -> { Log.i("[NFCsecure]", "Nfc state turning on.") }
+            NfcAdapter.STATE_ON -> {
+                Log.i("[NFCsecure]", "Nfc state enabled.")
+                try {
+                    val duration = context?.getSharedPreferences(Const.NAME, Context.MODE_PRIVATE)?.getInt(Const.DURATION, 0)
+                    Log.i("[NFCsecure]", "Duration: $duration.")
+                    createNotificationIntent(context!!, duration!!)
+                } catch (e: Exception) { Log.e("[NFCsecure]", "Error: $e.") }
             }
         }
     }
+
+    private fun createNotificationIntent(context: Context, duration: Int) {
+        val pendingIntent = PendingIntent.getBroadcast(context,1,
+            Intent(context, NotificationReceiver::class.java), PendingIntent.FLAG_UPDATE_CURRENT)
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + (duration.toLong() * 1000), pendingIntent)
+    }
+
+    fun cancelNotificationIntent(context: Context) {
+        val pendingIntent = PendingIntent.getBroadcast(context,1,
+            Intent(context, NotificationReceiver::class.java), PendingIntent.FLAG_UPDATE_CURRENT)
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.cancel(pendingIntent)
+
+    }
+
 }

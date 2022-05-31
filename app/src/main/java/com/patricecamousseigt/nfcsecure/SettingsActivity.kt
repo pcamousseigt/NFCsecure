@@ -31,16 +31,14 @@ class SettingsActivity : AppCompatActivity() {
             switchPreference?.setOnPreferenceChangeListener { preference, newValue ->
                 try {
                     val activation = newValue as Boolean
-
+                    // save the value in shared preferences
                     context?.getSharedPreferences(Const.NAME, MODE_PRIVATE)?.edit()?.putBoolean(Const.ACTIVATION, activation)?.apply()
-
+                    // launch service or stop it depending on user's choice
                     if (activation) { activity?.startService(Intent(activity, NfcService::class.java)) }
                     else { activity?.stopService(Intent(activity, NfcService::class.java)) }
 
                     Toast.makeText(context, activation.toString(), Toast.LENGTH_SHORT).show()
-                } catch (e: Exception) {
-                    Log.e("[NFCsecure]", "Error : $e")
-                }
+                } catch (e: Exception) { Log.e("[NFCsecure]", "Error : $e") }
                 true
             }
 
@@ -48,11 +46,11 @@ class SettingsActivity : AppCompatActivity() {
             listPreference?.setOnPreferenceChangeListener { preference, newValue ->
                 try {
                     val duration = (newValue as String).toInt()
+                    // save the value in shared preferences
                     context?.getSharedPreferences(Const.NAME, Context.MODE_PRIVATE)?.edit()?.putInt(Const.DURATION, duration)?.apply()
+
                     Toast.makeText(context, duration.toString(), Toast.LENGTH_SHORT).show()
-                } catch (e: Exception) {
-                    Log.e("[NFCsecure]", "Error : $e")
-                }
+                } catch (e: Exception) { Log.e("[NFCsecure]", "Error : $e") }
                 true
             }
         }

@@ -11,6 +11,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.NFCsecure">
+        <receiver
+            android:name=".NotificationReceiver"
+            android:enabled="true"
+            android:exported="false"></receiver>
 
         <activity
             android:name=".SettingsActivity"
@@ -26,12 +30,12 @@
         <service
             android:name=".NfcService"
             android:enabled="true"
-            android:exported="false"/>
+            android:exported="false" />
 
         <receiver
             android:name=".NfcStateReceiver"
             android:enabled="true"
-            android:exported="false"/>
+            android:exported="false" />
     </application>
 
 </manifest>

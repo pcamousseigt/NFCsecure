@@ -46,14 +46,17 @@ class NfcService: Service() {
     }
 
     override fun onDestroy() {
-        Log.i("[NFCsecure]","Service onDestroy.")
+        Log.i("[NFCsecure]","Service destroyed.")
 
         try {
-            // Remove the broadcast listener
+            // remove the broadcast listener
             this.unregisterReceiver(nfcStateReceiver)
         } catch (e: Exception) {
             Log.e("[NFCsecure]", "Error : $e")
         }
+        
+        // remove manually a potential alarm scheduled
+        nfcStateReceiver?.cancelNotificationIntent(applicationContext)
 
         // release the wakelock
         wakeLock?.release()
