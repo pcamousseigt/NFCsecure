@@ -18,9 +18,8 @@ class SettingsActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction().replace(R.id.settings, SettingsFragment()).commit()
         }
-
-        //startService(Intent(this, NfcService::class.java))
     }
+
 
     class SettingsFragment : PreferenceFragmentCompat() {
 

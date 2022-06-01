@@ -23,8 +23,7 @@ class NfcStateReceiver : BroadcastReceiver() {
             NfcAdapter.STATE_OFF -> { Log.i("[NFCsecure]", "Nfc state disabled.") }
             NfcAdapter.STATE_TURNING_OFF -> { Log.i("[NFCsecure]", "Nfc state turning off.") }
             NfcAdapter.STATE_TURNING_ON -> { Log.i("[NFCsecure]", "Nfc state turning on.") }
-            NfcAdapter.STATE_ON -> {
-                Log.i("[NFCsecure]", "Nfc state enabled.")
+            NfcAdapter.STATE_ON -> { Log.i("[NFCsecure]", "Nfc state enabled.")
                 try {
                     val duration = context?.getSharedPreferences(Const.NAME, Context.MODE_PRIVATE)?.getInt(Const.DURATION, 0)
                     Log.i("[NFCsecure]", "Duration: $duration.")
@@ -35,14 +34,14 @@ class NfcStateReceiver : BroadcastReceiver() {
     }
 
     private fun createNotificationIntent(context: Context, duration: Int) {
-        val pendingIntent = PendingIntent.getBroadcast(context,1,
+        val pendingIntent = PendingIntent.getBroadcast(context, 1,
             Intent(context, NotificationReceiver::class.java), PendingIntent.FLAG_UPDATE_CURRENT)
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + (duration.toLong() * 1000), pendingIntent)
     }
 
     fun cancelNotificationIntent(context: Context) {
-        val pendingIntent = PendingIntent.getBroadcast(context,1,
+        val pendingIntent = PendingIntent.getBroadcast(context, 1,
             Intent(context, NotificationReceiver::class.java), PendingIntent.FLAG_UPDATE_CURRENT)
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         alarmManager.cancel(pendingIntent)
