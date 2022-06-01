@@ -28,7 +28,7 @@ class NfcService: Service() {
         Log.i("[NFCsecure]","Service running in the background.")
 
         // to avoid the service to be destroyed when app is killed
-        startForeground(FOREGROUND_ID, NotificationBuilder(applicationContext).builder(NotificationContent.NOTIFICATION_SERVICE_RUNNING))
+        //startForeground(FOREGROUND_ID, NotificationBuilder(applicationContext).builder(NotificationContent.NOTIFICATION_SERVICE_RUNNING))
 
         nfcStateReceiver = NfcStateReceiver()
 
@@ -48,6 +48,9 @@ class NfcService: Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        // to avoid the service to be destroyed when app is killed
+        startForeground(FOREGROUND_ID, NotificationBuilder(applicationContext).builder(NotificationContent.NOTIFICATION_SERVICE_RUNNING))
+
         // make sure the service is restarted if the system kills the service
         return START_STICKY
     }
