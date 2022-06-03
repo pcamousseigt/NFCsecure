@@ -16,13 +16,17 @@ class NotificationBuilder(private val context: Context) {
         NOTIFICATION_SERVICE_RUNNING("NFCsecure", "Protecting you NFC.", 1000),
         NOTIFICATION_NFC("NFC enabled", "Click here to disable your NFC.", 1001);
     }
-
+//Intent(context, SettingsActivity::class.java)
     private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     fun builder(notification: NotificationContent): Notification {
+
+        val intent: Intent = when(notification) {
+            NotificationContent.NOTIFICATION_SERVICE_RUNNING -> Intent(context, SettingsActivity::class.java)
+            NotificationContent.NOTIFICATION_NFC -> Intent(Settings.ACTION_NFC_SETTINGS)
+        }
         // the PendingIntent to launch our activity if the user selects this notification
-        val pendingIntent = PendingIntent.getActivity(context, 0,
-            Intent(Settings.ACTION_NFC_SETTINGS), PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         // TODO : change transparency of the image
         val image: Int = R.drawable.ic_launcher_foreground
