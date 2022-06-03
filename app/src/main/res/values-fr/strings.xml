@@ -7,11 +7,11 @@
     <string name="nfc_header">NFC</string>
 
     <!-- NFC Preferences -->
-    <string name="activation_title">Activate</string>
-    <string name="duration_title">Delay before notifying the user</string>
+    <string name="activation_title">Activer</string>
+    <string name="duration_title">Délai avant notification</string>
 
     <!-- List preferences delays -->
-    <string name="immediately">Immediately</string>
-    <string name="ten_seconds">10 seconds</string>
-    <string name="thirty_seconds">30 seconds</string>
+    <string name="immediately">Immédiatement</string>
+    <string name="ten_seconds">10 secondes</string>
+    <string name="thirty_seconds">30 secondes</string>
 </resources>

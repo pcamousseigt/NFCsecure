@@ -35,8 +35,6 @@ class SettingsActivity : AppCompatActivity() {
                     // launch service or stop it depending on user's choice
                     if (activation) { activity?.startService(Intent(activity, NfcService::class.java)) }
                     else { activity?.stopService(Intent(activity, NfcService::class.java)) }
-
-                    Toast.makeText(context, activation.toString(), Toast.LENGTH_SHORT).show()
                 } catch (e: Exception) { Log.e("[NFCsecure]", "Error : $e") }
                 true
             }
@@ -47,8 +45,6 @@ class SettingsActivity : AppCompatActivity() {
                     val duration = (newValue as String).toInt()
                     // save the value in shared preferences
                     context?.getSharedPreferences(Const.NAME, Context.MODE_PRIVATE)?.edit()?.putInt(Const.DURATION, duration)?.apply()
-
-                    Toast.makeText(context, duration.toString(), Toast.LENGTH_SHORT).show()
                 } catch (e: Exception) { Log.e("[NFCsecure]", "Error : $e") }
                 true
             }
