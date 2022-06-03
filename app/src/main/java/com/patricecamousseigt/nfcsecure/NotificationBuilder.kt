@@ -28,8 +28,7 @@ class NotificationBuilder(private val context: Context) {
         // the PendingIntent to launch our activity if the user selects this notification
         val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        // TODO : change transparency of the image
-        val image: Int = R.drawable.ic_launcher_foreground
+        val image: Int = R.drawable.ic_notification
 
         // set the info for the views that show in the notification panel
         val b: NotificationCompat.Builder = NotificationCompat.Builder(context, "")
