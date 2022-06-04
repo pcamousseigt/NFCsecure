@@ -4,7 +4,7 @@
     <string name="title_activity_settings">SettingsActivity</string>
 
     <!-- Preference Titles -->
-    <string name="nfc_header">NFC</string>
+    <string name="nfc_service">NFC inspector</string>
 
     <!-- NFC Preferences -->
     <string name="activation_title">Activate</string>

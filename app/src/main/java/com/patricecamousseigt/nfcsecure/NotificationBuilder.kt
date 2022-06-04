@@ -16,7 +16,7 @@ class NotificationBuilder(private val context: Context) {
         NOTIFICATION_SERVICE_RUNNING("NFCsecure", "Protecting you NFC.", 1000),
         NOTIFICATION_NFC("NFC enabled", "Click here to disable your NFC.", 1001);
     }
-//Intent(context, SettingsActivity::class.java)
+
     private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     fun builder(notification: NotificationContent): Notification {
