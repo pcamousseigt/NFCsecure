@@ -14,4 +14,9 @@
     <string name="immediately">Immediately</string>
     <string name="ten_seconds">10 seconds</string>
     <string name="thirty_seconds">30 seconds</string>
+    <string name="nfc_enabled">NFC enabled</string>
+
+    <!-- Notifications -->
+    <string name="protecting_nfc">Keeping a close eye to the NFC state.</string>
+    <string name="click_disable_nfc">Click here to disable your NFC.</string>
 </resources>

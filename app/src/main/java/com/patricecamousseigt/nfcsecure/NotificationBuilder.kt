@@ -12,9 +12,9 @@ import androidx.core.app.NotificationCompat
 
 class NotificationBuilder(private val context: Context) {
 
-    enum class NotificationContent(val title: String, val body: String, val id: Int) {
-        NOTIFICATION_SERVICE_RUNNING("NFCsecure", "Protecting you NFC.", 1000),
-        NOTIFICATION_NFC("NFC enabled", "Click here to disable your NFC.", 1001);
+    enum class NotificationContent(val title: Int, val body: Int, val id: Int) {
+        NOTIFICATION_SERVICE_RUNNING(R.string.app_name, R.string.protecting_nfc, 1000),
+        NOTIFICATION_NFC(R.string.nfc_enabled, R.string.click_disable_nfc, 1001);
     }
 
     private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -41,8 +41,8 @@ class NotificationBuilder(private val context: Context) {
         b.setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setContentTitle(notification.title)
-            .setContentText(notification.body)
+            .setContentTitle(context.getString(notification.title))
+            .setContentText(context.getString(notification.body))
             .setContentIntent(pendingIntent)
             .setSmallIcon(image)
 
