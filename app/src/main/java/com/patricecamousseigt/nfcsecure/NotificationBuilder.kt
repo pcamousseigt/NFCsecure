@@ -30,8 +30,14 @@ class NotificationBuilder(private val context: Context) {
 
         val image: Int = R.drawable.ic_notification
 
+        val channelId = "NFC_NOTIFICATION"
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(channelId, "NFCsecure Inspector", NotificationManager.IMPORTANCE_HIGH)
+            notificationManager.createNotificationChannel(channel)
+        }
+
         // set the info for the views that show in the notification panel
-        val b: NotificationCompat.Builder = NotificationCompat.Builder(context, "")
+        val b: NotificationCompat.Builder = NotificationCompat.Builder(context, channelId)
         b.setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -39,15 +45,6 @@ class NotificationBuilder(private val context: Context) {
             .setContentText(notification.body)
             .setContentIntent(pendingIntent)
             .setSmallIcon(image)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel("NFC_NOTIFICATION", "Channel NFCsecure",
-                NotificationManager.IMPORTANCE_HIGH)
-            notificationManager.createNotificationChannel(channel)
-            b.setChannelId("NFC_NOTIFICATION")
-        }
-
-        // TODO : manage vibration and song preferences
 
         return b.build()
     }

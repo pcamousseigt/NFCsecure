@@ -11,7 +11,6 @@ import com.patricecamousseigt.nfcsecure.NotificationBuilder.NotificationContent
 
 class NfcService: Service() {
 
-    private val NOTIFY_ID = 1337
     private val FOREGROUND_ID = 1338
 
     private var wakeLock: PowerManager.WakeLock? = null
@@ -26,9 +25,6 @@ class NfcService: Service() {
         super.onCreate()
 
         Log.i("[NFCsecure]","Service running in the background.")
-
-        // to avoid the service to be destroyed when app is killed
-        //startForeground(FOREGROUND_ID, NotificationBuilder(applicationContext).builder(NotificationContent.NOTIFICATION_SERVICE_RUNNING))
 
         nfcStateReceiver = NfcStateReceiver()
 

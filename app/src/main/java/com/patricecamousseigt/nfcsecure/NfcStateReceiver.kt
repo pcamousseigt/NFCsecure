@@ -26,7 +26,6 @@ class NfcStateReceiver : BroadcastReceiver() {
             NfcAdapter.STATE_ON -> { Log.i("[NFCsecure]", "Nfc state enabled.")
                 try {
                     val duration = context?.getSharedPreferences(Const.NAME, Context.MODE_PRIVATE)?.getInt(Const.DURATION, 0)
-                    Log.i("[NFCsecure]", "Duration: $duration.")
                     createNotificationIntent(context!!, duration!!)
                 } catch (e: Exception) { Log.e("[NFCsecure]", "Error: $e.") }
             }
