@@ -9,6 +9,11 @@ import android.content.Intent
 import android.os.Build
 import android.provider.Settings
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
+
+
+
 
 class NotificationBuilder(private val context: Context) {
 
@@ -63,4 +68,9 @@ class NotificationBuilder(private val context: Context) {
         }
     }
 
+    fun cancelNotification() {
+        for (nContent in NotificationContent.values()) {
+            notificationManager.cancel(nContent.id)
+        }
+    }
 }

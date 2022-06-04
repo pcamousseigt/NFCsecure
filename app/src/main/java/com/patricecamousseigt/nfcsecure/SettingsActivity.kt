@@ -8,7 +8,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.*
 import java.lang.Exception
-import kotlin.reflect.typeOf
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -18,8 +17,12 @@ class SettingsActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction().replace(R.id.settings, SettingsFragment()).commit()
         }
-    }
 
+        getSharedPreferences(Const.NAME, MODE_PRIVATE)?.registerOnSharedPreferenceChangeListener {
+                sharedPreferences, s ->
+            Toast.makeText(this, "shared : $sharedPreferences, s : $s", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     class SettingsFragment : PreferenceFragmentCompat() {
 
@@ -33,8 +36,13 @@ class SettingsActivity : AppCompatActivity() {
                     // save the value in shared preferences
                     context?.getSharedPreferences(Const.NAME, MODE_PRIVATE)?.edit()?.putBoolean(Const.ACTIVATION, activation)?.apply()
                     // launch service or stop it depending on user's choice
-                    if (activation) { activity?.startService(Intent(activity, NfcService::class.java)) }
-                    else { activity?.stopService(Intent(activity, NfcService::class.java)) }
+                    if (activation) {
+                        activity?.startService(Intent(activity, NfcService::class.java))
+                    }
+                    else {
+                        activity?.stopService(Intent(activity, NfcService::class.java))
+                        NotificationBuilder(requireContext()).cancelNotification()
+                    }
                 } catch (e: Exception) { Log.e("[NFCsecure]", "Error : $e") }
                 true
             }
@@ -44,7 +52,7 @@ class SettingsActivity : AppCompatActivity() {
                 try {
                     val duration = (newValue as String).toInt()
                     // save the value in shared preferences
-                    context?.getSharedPreferences(Const.NAME, Context.MODE_PRIVATE)?.edit()?.putInt(Const.DURATION, duration)?.apply()
+                    context?.getSharedPreferences(Const.NAME, MODE_PRIVATE)?.edit()?.putInt(Const.DURATION, duration)?.apply()
                 } catch (e: Exception) { Log.e("[NFCsecure]", "Error : $e") }
                 true
             }
