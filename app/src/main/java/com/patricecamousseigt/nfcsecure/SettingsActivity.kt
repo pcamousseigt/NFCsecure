@@ -41,6 +41,7 @@ class SettingsActivity : AppCompatActivity() {
                     }
                     else {
                         activity?.stopService(Intent(activity, NfcService::class.java))
+                        // remove all notifications displayed on the status bar
                         NotificationBuilder(requireContext()).cancelNotification()
                     }
                 } catch (e: Exception) { Log.e("[NFCsecure]", "Error : $e") }
