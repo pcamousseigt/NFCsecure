@@ -30,7 +30,7 @@ class AdActivity : AppCompatActivity() {
 
     private lateinit var bindingAdView: AdUnifiedBinding
 
-    private val ADMOB_AD_UNIT_ID = "ca-app-pub-3940256099942544/2247696110"
+    private val ADMOB_AD_UNIT_ID = "ca-app-pub-6749482233379426/7627036906"
 
     private var nativeAd: NativeAd? = null
 
