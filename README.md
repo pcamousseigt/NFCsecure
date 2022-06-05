@@ -13,10 +13,14 @@ The idea of creating NFCsecure came when I noticed that Google Pay does not ask 
   -- Service
   -- BroadcastReceiver
   -- Notifications
+  -- NativeAdView
 - MVVM architecture
   -- ViewModel
   -- LiveData
   -- Binding
+
+#### Advertising
+Coming soon...
 
 #### Installation
 Not available for now (but soon on Play Store).

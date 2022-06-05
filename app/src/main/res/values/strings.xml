@@ -19,4 +19,20 @@
     <!-- Notifications -->
     <string name="protecting_nfc">Keeping a close eye to the NFC state.</string>
     <string name="click_disable_nfc">Click here to disable your NFC.</string>
+
+    <!-- Ad activity -->
+    <string name="disable_nfc_inspector">Disable NFCsecure</string>
+    <!-- -
+        This is an ad unit ID for an interstitial test ad. Replace with your own interstitial ad unit id.
+        For more information, see https://support.google.com/admob/answer/3052638
+    <!- -->
+    <string name="interstitial_ad_unit_id">ca-app-pub-3940256099942544/1033173712</string>
+
+    <!-- Ad activity -->
+    <string name="thanks_for_waiting">Thanks for waiting…</string>
+    <string name="close">close</string>
+    <plurals name="x_seconds">
+        <item quantity="one">%1$d second</item>
+        <item quantity="other">%1$d seconds</item>
+    </plurals>
 </resources>

@@ -5,14 +5,14 @@
         <!-- The primary color is the color displayed most frequently across your app’s screens and components. -->
         <item name="colorPrimary">@color/blue</item>
         <!-- The primary variant color is used to distinguish two elements of the app using the primary color, such as the top app bar and the system bar. -->
-        <item name="colorPrimaryVariant">@color/blue</item>
+        <item name="colorPrimaryVariant">@color/blue_light</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <!-- The secondary color provides more ways to accent and distinguish your product. Secondary colors are best for:
         Floating action buttons, Selection controls, like checkboxes and radio buttons, Highlighting selected text, Links and headlines. -->
         <item name="colorSecondary">@color/blue</item>
         <!-- The secondary variant color is used to distinguish two elements of the app using the secondary color. -->
-        <item name="colorSecondaryVariant">@color/blue</item>
+        <item name="colorSecondaryVariant">@color/blue_light</item>
         <item name="colorOnSecondary">@color/white</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimary</item>

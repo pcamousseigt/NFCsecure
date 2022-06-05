@@ -1,10 +1,8 @@
 package com.patricecamousseigt.nfcsecure
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.*
 import java.lang.Exception
@@ -17,32 +15,28 @@ class SettingsActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction().replace(R.id.settings, SettingsFragment()).commit()
         }
-
-        getSharedPreferences(Const.NAME, MODE_PRIVATE)?.registerOnSharedPreferenceChangeListener {
-                sharedPreferences, s ->
-            Toast.makeText(this, "shared : $sharedPreferences, s : $s", Toast.LENGTH_SHORT).show()
-        }
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {
 
+        private var switchPreference: SwitchPreferenceCompat? = null
+
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
 
-            val switchPreference = findPreference<SwitchPreferenceCompat>("activation")
+            switchPreference = findPreference<SwitchPreferenceCompat>("activation")
             switchPreference?.setOnPreferenceChangeListener { preference, newValue ->
                 try {
                     val activation = newValue as Boolean
-                    // save the value in shared preferences
-                    context?.getSharedPreferences(Const.NAME, MODE_PRIVATE)?.edit()?.putBoolean(Const.ACTIVATION, activation)?.apply()
                     // launch service or stop it depending on user's choice
                     if (activation) {
+                        // save the value in shared preferences
+                        context?.getSharedPreferences(Const.NAME, MODE_PRIVATE)?.edit()?.putBoolean(Const.ACTIVATION, activation)?.apply()
+                        // start NFC inspector service
                         activity?.startService(Intent(activity, NfcService::class.java))
                     }
                     else {
-                        activity?.stopService(Intent(activity, NfcService::class.java))
-                        // remove all notifications displayed on the status bar
-                        NotificationBuilder(requireContext()).cancelNotification()
+                        startActivity(Intent(activity, AdActivity::class.java))
                     }
                 } catch (e: Exception) { Log.e("[NFCsecure]", "Error : $e") }
                 true
@@ -57,6 +51,14 @@ class SettingsActivity : AppCompatActivity() {
                 } catch (e: Exception) { Log.e("[NFCsecure]", "Error : $e") }
                 true
             }
+        }
+
+        override fun onResume() {
+            super.onResume()
+            try {
+                val activation = context?.getSharedPreferences(Const.NAME, MODE_PRIVATE)?.getBoolean(Const.ACTIVATION, false)!!
+                switchPreference?.isChecked = activation
+            } catch (e: Exception) { Log.e("[NFCsecure]", "Error : $e") }
         }
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
