@@ -7,6 +7,8 @@ import android.os.PowerManager
 import android.util.Log
 import android.nfc.NfcAdapter
 import com.patricecamousseigt.nfcsecure.NotificationBuilder.NotificationContent
+import com.patricecamousseigt.nfcsecure.util.UtilConst
+import com.patricecamousseigt.nfcsecure.util.UtilConst.Companion.TAG
 
 
 class NfcService: Service() {
@@ -17,14 +19,14 @@ class NfcService: Service() {
     private var nfcStateReceiver: NfcStateReceiver? = null
 
     override fun onBind(p0: Intent?): IBinder? {
-        Log.i("[NFCsecure]","Service onBind.")
+        Log.i(TAG,"Service onBind.")
         return null
     }
 
     override fun onCreate() {
         super.onCreate()
 
-        Log.i("[NFCsecure]","Service running in the background.")
+        Log.i(TAG,"Service running in the background.")
 
         nfcStateReceiver = NfcStateReceiver()
 
@@ -52,7 +54,7 @@ class NfcService: Service() {
     }
 
     override fun onDestroy() {
-        Log.i("[NFCsecure]","Service destroyed.")
+        Log.i(TAG,"Service destroyed.")
 
         // remove manually a potential alarm scheduled
         nfcStateReceiver?.cancelNotificationIntent(applicationContext)
@@ -60,7 +62,7 @@ class NfcService: Service() {
         try {
             // remove the broadcast listener
             unregisterReceiver(nfcStateReceiver)
-        } catch (e: Exception) { Log.e("[NFCsecure]", "Error : $e") }
+        } catch (e: Exception) { Log.e(TAG, "Error : $e") }
 
         // release the wakelock
         wakeLock?.release()

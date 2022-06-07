@@ -7,6 +7,8 @@ import android.nfc.NfcAdapter
 import android.util.Log
 import android.app.AlarmManager
 import android.app.PendingIntent
+import com.patricecamousseigt.nfcsecure.util.UtilConst
+import com.patricecamousseigt.nfcsecure.util.UtilConst.Companion.TAG
 
 class NfcStateReceiver : BroadcastReceiver() {
 
@@ -20,14 +22,14 @@ class NfcStateReceiver : BroadcastReceiver() {
 
     fun execute(context: Context?, state : Int) {
         when (state) {
-            NfcAdapter.STATE_OFF -> { Log.i("[NFCsecure]", "Nfc state disabled.") }
-            NfcAdapter.STATE_TURNING_OFF -> { Log.i("[NFCsecure]", "Nfc state turning off.") }
-            NfcAdapter.STATE_TURNING_ON -> { Log.i("[NFCsecure]", "Nfc state turning on.") }
-            NfcAdapter.STATE_ON -> { Log.i("[NFCsecure]", "Nfc state enabled.")
+            NfcAdapter.STATE_OFF -> { Log.i(TAG, "Nfc state disabled.") }
+            NfcAdapter.STATE_TURNING_OFF -> { Log.i(TAG, "Nfc state turning off.") }
+            NfcAdapter.STATE_TURNING_ON -> { Log.i(TAG, "Nfc state turning on.") }
+            NfcAdapter.STATE_ON -> { Log.i(TAG, "Nfc state enabled.")
                 try {
-                    val duration = context?.getSharedPreferences(Const.NAME, Context.MODE_PRIVATE)?.getInt(Const.DURATION, 0)
+                    val duration = context?.getSharedPreferences(SharedPrefsConst.NAME, Context.MODE_PRIVATE)?.getInt(SharedPrefsConst.DURATION, 0)
                     createNotificationIntent(context!!, duration!!)
-                } catch (e: Exception) { Log.e("[NFCsecure]", "Error: $e.") }
+                } catch (e: Exception) { Log.e(TAG, "Error: $e.") }
             }
         }
     }

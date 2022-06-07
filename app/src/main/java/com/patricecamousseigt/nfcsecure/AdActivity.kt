@@ -15,13 +15,14 @@ import com.google.android.gms.ads.AdLoader
 import com.google.android.gms.ads.VideoOptions
 import com.google.android.gms.ads.nativead.NativeAdView
 import android.widget.*
+import com.google.ads.mediation.admob.AdMobAdapter
 import com.google.android.gms.ads.VideoController.VideoLifecycleCallbacks
 import com.google.android.gms.ads.nativead.NativeAd.OnNativeAdLoadedListener
 import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.patricecamousseigt.nfcsecure.databinding.AdUnifiedBinding
 import com.patricecamousseigt.nfcsecure.databinding.AdActivityBinding
+import com.patricecamousseigt.nfcsecure.util.UtilConst.Companion.TAG
 import java.util.*
-import kotlin.concurrent.schedule
 
 
 class AdActivity : AppCompatActivity() {
@@ -30,15 +31,15 @@ class AdActivity : AppCompatActivity() {
 
     private lateinit var bindingAdView: AdUnifiedBinding
 
+    private lateinit var textViewWaiting: TextView
+
+    private lateinit var disableNfcInspectorButton: Button
+
     private val ADMOB_AD_UNIT_ID = "ca-app-pub-6749482233379426/7627036906"
 
     private var nativeAd: NativeAd? = null
 
     private val WAITING_TIME = 5000 // 5 seconds
-
-    private lateinit var textViewWaiting: TextView
-
-    private lateinit var disableNfcInspectorButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,7 +63,7 @@ class AdActivity : AppCompatActivity() {
         disableNfcInspectorButton.isEnabled = false
         disableNfcInspectorButton.setOnClickListener {
             // save the value in shared preferences
-            getSharedPreferences(Const.NAME, MODE_PRIVATE)?.edit()?.putBoolean(Const.ACTIVATION, false)?.apply()
+            getSharedPreferences(SharedPrefsConst.NAME, MODE_PRIVATE)?.edit()?.putBoolean(SharedPrefsConst.ACTIVATION, false)?.apply()
             // stop the NFC inspector service
             stopService(Intent(this, NfcService::class.java))
             // remove all notifications displayed on the status bar
@@ -72,13 +73,14 @@ class AdActivity : AppCompatActivity() {
         }
     }
 
-    private fun enableButton() {
+    private fun enableNfcButton() {
         // force user to watch the image during five seconds
         val timer = object: CountDownTimer(WAITING_TIME.toLong(), 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 runOnUiThread {
                     val secondsUntilFinished = millisUntilFinished.toInt() / 1000
-                    textViewWaiting.text = getString(R.string.thanks_for_waiting) + " " +
+                    textViewWaiting.text = getString(R.string.thanks_for_waiting) +
+                            " " +
                             resources.getQuantityString(R.plurals.x_seconds, secondsUntilFinished, secondsUntilFinished)
                 }
             }
@@ -168,7 +170,7 @@ class AdActivity : AppCompatActivity() {
         val vc = nativeAd.mediaContent!!.videoController
         // Updates the UI to say whether or not this ad has a video asset.
         if (vc.hasVideoContent()) {
-            enableButton()
+            enableNfcButton()
             // Create a new VideoLifecycleCallbacks object and pass it to the VideoController.
             // The VideoController will call methods on this object when events occur in the video lifecycle.
             vc.videoLifecycleCallbacks = object : VideoLifecycleCallbacks() {
@@ -181,12 +183,7 @@ class AdActivity : AppCompatActivity() {
             }
         } else {
             // Ad does not contain a video asset
-            enableButton()
-
-
-            Timer().schedule(5000) {
-                runOnUiThread { disableNfcInspectorButton.isEnabled = true }
-            }
+            enableNfcButton()
         }
     }
 
@@ -197,16 +194,14 @@ class AdActivity : AppCompatActivity() {
      */
     private fun refreshAd() {
         val builder = AdLoader.Builder(this, ADMOB_AD_UNIT_ID)
-        builder.forNativeAd(
-            OnNativeAdLoadedListener { nativeAd ->
-                // If this callback occurs after the activity is destroyed, you must call
-                // destroy and return or you may get a memory leak.
+        builder.forNativeAd(OnNativeAdLoadedListener {
+                nativeAd ->
+                // If this callback occurs after the activity is destroyed, you must call destroy and return or you may get a memory leak.
                 if (isDestroyed || isFinishing || isChangingConfigurations) {
                     nativeAd.destroy()
                     return@OnNativeAdLoadedListener
                 }
-                // You must call destroy on old ads when you are done with them,
-                // otherwise you will have a memory leak.
+                // You must call destroy on old ads when you are done with them, otherwise you will have a memory leak.
                 this@AdActivity.nativeAd?.destroy()
                 this@AdActivity.nativeAd = nativeAd
                 val frameLayout = bindingActivity.flAdPlaceholder
@@ -220,15 +215,19 @@ class AdActivity : AppCompatActivity() {
         val videoOptions = VideoOptions.Builder().setStartMuted(false).build()
         val adOptions: NativeAdOptions = NativeAdOptions.Builder().setVideoOptions(videoOptions).build()
         builder.withNativeAdOptions(adOptions)
+        // ad loader
         val adLoader = builder.withAdListener(
             object : AdListener() {
                 override fun onAdFailedToLoad(loadAdError: LoadAdError) {
-                    enableButton()
+                    enableNfcButton()
                     val error = String.format("domain: %s, code: %d, message: %s", loadAdError.domain, loadAdError.code, loadAdError.message)
-                    Log.e("[NFCsecure]", "Failed to load native ad with error $error")
+                    Log.e(TAG, "Failed to load native ad with error $error")
                 }
             }).build()
-        adLoader.loadAd(AdRequest.Builder().build())
+        // ad request
+        val adRequest = AdRequest.Builder()
+        // TODO : depending on consent form GDPR
+        adLoader.loadAd(adRequest.build())
     }
 
     override fun onDestroy() {

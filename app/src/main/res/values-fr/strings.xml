@@ -2,6 +2,7 @@
     <string name="app_name">NFCsecure</string>
     <!-- Settings Activity Title -->
     <string name="title_activity_settings">SettingsActivity</string>
+    <string name="settings">Paramètres</string>
 
     <!-- Preference Titles -->
     <string name="nfc_service">Vérificateur NFC</string>

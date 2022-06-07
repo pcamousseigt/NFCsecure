@@ -13,7 +13,8 @@ The idea of creating NFCsecure came when I noticed that Google Pay does not ask 
   -- Service
   -- BroadcastReceiver
   -- Notifications
-  -- NativeAdView
+  -- NativeAdView (Google AdMob)
+  -- GDPR consent form (Google AdMob)
 - MVVM architecture
   -- ViewModel
   -- LiveData

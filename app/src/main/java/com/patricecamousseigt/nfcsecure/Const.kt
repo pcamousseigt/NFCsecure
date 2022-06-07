@@ -1,11 +1,12 @@
 package com.patricecamousseigt.nfcsecure
 
-class Const {
+class SharedPrefsConst {
 
-    companion object SharedPreferences {
+    companion object {
         const val NAME = "NFC_shared_preferences"
         const val ACTIVATION = "activation"
         const val DURATION = "duration"
+        const val NON_PERSONALIZED_ADS = "non_personalized_ads"
     }
 
 }

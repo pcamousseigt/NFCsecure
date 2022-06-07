@@ -7,8 +7,8 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import java.lang.Exception
 import android.os.Build
-
-
+import com.patricecamousseigt.nfcsecure.util.UtilConst
+import com.patricecamousseigt.nfcsecure.util.UtilConst.Companion.TAG
 
 
 class AutoStartup: BroadcastReceiver() {
@@ -18,8 +18,8 @@ class AutoStartup: BroadcastReceiver() {
             val intent = p1!!
             if (intent.action != null && intent.action.equals(Intent.ACTION_BOOT_COMPLETED)) {
                 val context = p0!!
-                val sharedPref = context.getSharedPreferences(Const.NAME, AppCompatActivity.MODE_PRIVATE)
-                val activated = sharedPref.getBoolean(Const.ACTIVATION, false)
+                val sharedPref = context.getSharedPreferences(SharedPrefsConst.NAME, AppCompatActivity.MODE_PRIVATE)
+                val activated = sharedPref.getBoolean(SharedPrefsConst.ACTIVATION, false)
                 if (activated) {
                     val nfcIntent = Intent(context, NfcService::class.java)
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -30,7 +30,7 @@ class AutoStartup: BroadcastReceiver() {
                 }
             }
         } catch (e: Exception) {
-            Log.i("[NFCsecure]", "Error : $e")
+            Log.i(TAG, "Error : $e")
         }
     }
 }
