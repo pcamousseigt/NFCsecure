@@ -1,34 +1,17 @@
 package com.patricecamousseigt.nfcsecure
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.ImageView
+import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.*
-import java.lang.Exception
-import com.google.android.ump.FormError
+import com.google.android.ump.*
 
-import com.google.android.ump.ConsentInformation
-import com.google.android.ump.ConsentInformation.OnConsentInfoUpdateFailureListener
-import com.google.android.ump.ConsentInformation.OnConsentInfoUpdateSuccessListener
-
-import com.google.android.ump.UserMessagingPlatform
-
-import com.google.android.ump.ConsentRequestParameters
-import com.google.android.ump.ConsentForm
 import com.patricecamousseigt.nfcsecure.databinding.SettingsActivityBinding
-import com.patricecamousseigt.nfcsecure.util.UtilConst
 import com.patricecamousseigt.nfcsecure.util.UtilConst.Companion.TAG
 
 
 class SettingsActivity : AppCompatActivity() {
-
-    //private lateinit var bindingActivity: SettingsActivityBinding
-
-    //private var consentInformation: ConsentInformation? = null
-    //private var consentForm: ConsentForm? = null
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +23,8 @@ class SettingsActivity : AppCompatActivity() {
             supportFragmentManager.beginTransaction().replace(R.id.settings, SettingsFragment()).commit()
         }
 
+        val dataUsageButton = bindingActivity.dataUsage
+
         // Set tag for underage of consent. false means users are not underage.
         val params = ConsentRequestParameters.Builder().setTagForUnderAgeOfConsent(false).build()
 
@@ -47,26 +32,31 @@ class SettingsActivity : AppCompatActivity() {
         consentInformation.requestConsentInfoUpdate(this, params,
             {
                 // The consent information state was updated, now ready to check if a form is available
-                if (consentInformation.consentStatus == ConsentInformation.ConsentStatus.REQUIRED) {
-                    loadForm();
+                val consentStatus = consentInformation.consentStatus
+                if (consentStatus != ConsentInformation.ConsentStatus.NOT_REQUIRED) {
+                    // If the user is concerned by gdpr consent, the button to manage consent is displayed
+                    dataUsageButton.setOnClickListener { loadForm() }
+                    dataUsageButton.visibility = VISIBLE
+                    dataUsageButton.isClickable = true
+                    dataUsageButton.isFocusable = true
+                    if (consentStatus == ConsentInformation.ConsentStatus.REQUIRED) {
+                        // If the user has not given his consent, the consent form is displayed
+                        loadForm()
+                    }
                 }
+
             },
             {
                 // Handle the error
                 Log.e(TAG, "OnConsentInfoUpdateFailureListener : $it")
-            })
-
-        val dataUsageButton = bindingActivity.dataUsage
-        dataUsageButton.setOnClickListener { loadForm() }
+        })
     }
 
     private fun loadForm() {
-        UserMessagingPlatform.loadConsentForm(this, {
-            consentForm ->
-            //this@SettingsActivity.consentForm = consentForm
+        UserMessagingPlatform.loadConsentForm(this, { consentForm ->
             consentForm.show(this@SettingsActivity) {
                 // Handle dismissal
-                Log.i(TAG, "Form dismissed")
+                Log.i(TAG, "Consent form dismissed")
             }
         }) {
             // Handle the error

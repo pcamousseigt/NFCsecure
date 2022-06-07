@@ -29,8 +29,9 @@
             android:contentDescription="@string/settings"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:clickable="true"
-            android:focusable="true" />
+            android:clickable="false"
+            android:focusable="false"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/logo_image"

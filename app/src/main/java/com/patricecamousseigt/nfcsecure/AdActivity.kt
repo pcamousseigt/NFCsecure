@@ -26,7 +26,7 @@ import java.util.*
 
 
 class AdActivity : AppCompatActivity() {
-
+//TODO : improve the waiting time if no ad is loaded
     private lateinit var bindingActivity: AdActivityBinding
 
     private lateinit var bindingAdView: AdUnifiedBinding
@@ -79,9 +79,10 @@ class AdActivity : AppCompatActivity() {
             override fun onTick(millisUntilFinished: Long) {
                 runOnUiThread {
                     val secondsUntilFinished = millisUntilFinished.toInt() / 1000
-                    textViewWaiting.text = getString(R.string.thanks_for_waiting) +
-                            " " +
-                            resources.getQuantityString(R.plurals.x_seconds, secondsUntilFinished, secondsUntilFinished)
+                    textViewWaiting.text =
+                        getString(R.string.thanks_for_waiting)
+                        .plus(" ")
+                        .plus(resources.getQuantityString(R.plurals.x_seconds, secondsUntilFinished, secondsUntilFinished))
                 }
             }
 
@@ -215,18 +216,33 @@ class AdActivity : AppCompatActivity() {
         val videoOptions = VideoOptions.Builder().setStartMuted(false).build()
         val adOptions: NativeAdOptions = NativeAdOptions.Builder().setVideoOptions(videoOptions).build()
         builder.withNativeAdOptions(adOptions)
+
         // ad loader
-        val adLoader = builder.withAdListener(
-            object : AdListener() {
+        val adLoader = builder.withAdListener(object : AdListener() {
                 override fun onAdFailedToLoad(loadAdError: LoadAdError) {
                     enableNfcButton()
                     val error = String.format("domain: %s, code: %d, message: %s", loadAdError.domain, loadAdError.code, loadAdError.message)
                     Log.e(TAG, "Failed to load native ad with error $error")
                 }
             }).build()
+
         // ad request
         val adRequest = AdRequest.Builder()
-        // TODO : depending on consent form GDPR
+
+        val gdprConsent = GdprConsentManager(applicationContext)
+        if (gdprConsent.canShowPersonalizedAds()) {
+            // The default behavior of the Google Mobile Ads SDK is to serve personalized ads.
+            // If a user has consented to receive only non-personalized ads, you can configure
+            // an AdRequest object with the following code to specify that only non-personalized
+            // ads should be returned.
+            Log.i(TAG, "User consented to personalized ads")
+        } else {
+            // By default, the user consented to show non personalized ads
+            Log.i(TAG, "User consented to non personalized ads")
+            val extras = Bundle()
+            extras.putString("npa", "1")
+            adRequest.addNetworkExtrasBundle(AdMobAdapter::class.java, extras)
+        }
         adLoader.loadAd(adRequest.build())
     }
 
