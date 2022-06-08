@@ -1,14 +1,15 @@
 package com.patricecamousseigt.nfcsecure
 
+import android.app.ActivityManager
 import android.app.Service
 import android.content.*
 import android.os.IBinder
 import android.os.PowerManager
 import android.util.Log
 import android.nfc.NfcAdapter
+import androidx.core.content.getSystemService
 import com.patricecamousseigt.nfcsecure.NotificationBuilder.NotificationContent
-import com.patricecamousseigt.nfcsecure.util.UtilConst
-import com.patricecamousseigt.nfcsecure.util.UtilConst.Companion.TAG
+import com.patricecamousseigt.nfcsecure.util.Util.Companion.TAG
 
 
 class NfcService: Service() {
@@ -69,5 +70,11 @@ class NfcService: Service() {
 
         super.onDestroy()
     }
+
+    @Suppress("DEPRECATION") // Deprecated for third party Services.
+    fun isRunning(context: Context): Boolean =
+        (context.getSystemService(ACTIVITY_SERVICE) as ActivityManager)
+            .getRunningServices(Integer.MAX_VALUE)
+            .any { it.service.className == NfcService::class.java.name }
 
 }

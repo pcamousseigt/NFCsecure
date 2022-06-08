@@ -1,9 +1,10 @@
 package com.patricecamousseigt.nfcsecure.util
 
-class UtilConst {
+class Util {
 
     companion object {
         const val TAG = "[NFCsecure]"
     }
+
 
 }

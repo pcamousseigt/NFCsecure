@@ -1,5 +1,7 @@
 package com.patricecamousseigt.nfcsecure
 
+import android.app.ActivityManager
+import android.content.Context
 import android.content.Intent
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
@@ -21,7 +23,7 @@ import com.google.android.gms.ads.nativead.NativeAd.OnNativeAdLoadedListener
 import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.patricecamousseigt.nfcsecure.databinding.AdUnifiedBinding
 import com.patricecamousseigt.nfcsecure.databinding.AdActivityBinding
-import com.patricecamousseigt.nfcsecure.util.UtilConst.Companion.TAG
+import com.patricecamousseigt.nfcsecure.util.Util.Companion.TAG
 import java.util.*
 
 

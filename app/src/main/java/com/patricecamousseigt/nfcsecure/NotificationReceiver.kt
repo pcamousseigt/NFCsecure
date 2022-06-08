@@ -5,8 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.patricecamousseigt.nfcsecure.NotificationBuilder.NotificationContent
-import com.patricecamousseigt.nfcsecure.util.UtilConst
-import com.patricecamousseigt.nfcsecure.util.UtilConst.Companion.TAG
+import com.patricecamousseigt.nfcsecure.util.Util.Companion.TAG
 
 
 class NotificationReceiver : BroadcastReceiver() {

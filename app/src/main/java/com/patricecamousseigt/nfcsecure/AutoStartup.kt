@@ -7,8 +7,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import java.lang.Exception
 import android.os.Build
-import com.patricecamousseigt.nfcsecure.util.UtilConst
-import com.patricecamousseigt.nfcsecure.util.UtilConst.Companion.TAG
+import com.patricecamousseigt.nfcsecure.util.Util.Companion.TAG
 
 
 class AutoStartup: BroadcastReceiver() {

@@ -7,8 +7,7 @@ import android.nfc.NfcAdapter
 import android.util.Log
 import android.app.AlarmManager
 import android.app.PendingIntent
-import com.patricecamousseigt.nfcsecure.util.UtilConst
-import com.patricecamousseigt.nfcsecure.util.UtilConst.Companion.TAG
+import com.patricecamousseigt.nfcsecure.util.Util.Companion.TAG
 
 class NfcStateReceiver : BroadcastReceiver() {
 

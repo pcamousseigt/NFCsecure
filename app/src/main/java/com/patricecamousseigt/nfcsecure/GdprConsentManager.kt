@@ -1,9 +1,7 @@
 package com.patricecamousseigt.nfcsecure
 
 import android.content.Context
-import android.util.Log
 import androidx.preference.PreferenceManager
-import com.patricecamousseigt.nfcsecure.util.UtilConst.Companion.TAG
 
 /**
  * @author Tyler V [https://stackoverflow.com/a/70324431]
