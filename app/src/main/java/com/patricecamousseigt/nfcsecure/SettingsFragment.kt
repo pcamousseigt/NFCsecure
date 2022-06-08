@@ -18,7 +18,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         super.onCreate(savedInstanceState)
 
         switchPreference = findPreference("activation")
-        Log.i(TAG, "NfcService isRunning : ${NfcService().isRunning(requireContext())}")
         switchPreference?.setOnPreferenceChangeListener { _, newValue ->
             try {
                 val activation = newValue as Boolean

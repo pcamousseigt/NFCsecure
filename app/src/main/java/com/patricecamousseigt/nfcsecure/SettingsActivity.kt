@@ -6,7 +6,6 @@ import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.*
 import com.google.android.ump.*
-
 import com.patricecamousseigt.nfcsecure.databinding.SettingsActivityBinding
 import com.patricecamousseigt.nfcsecure.util.Util.Companion.TAG
 
@@ -15,7 +14,6 @@ class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
 
         val bindingActivity = SettingsActivityBinding.inflate(layoutInflater)
         setContentView(bindingActivity.root)

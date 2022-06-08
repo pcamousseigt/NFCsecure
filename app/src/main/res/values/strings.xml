@@ -9,6 +9,8 @@
 
     <!-- NFC Preferences -->
     <string name="activation_title">Activate</string>
+    <string name="activation_on">Nfc Inspector is running</string>
+    <string name="activation_off">Nfc Inspector is not running</string>
     <string name="duration_title">Delay before notifying the user</string>
 
     <!-- List preferences delays -->

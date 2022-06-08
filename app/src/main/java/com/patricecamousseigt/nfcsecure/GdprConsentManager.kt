@@ -9,22 +9,6 @@ import androidx.preference.PreferenceManager
  */
 class GdprConsentManager(val context: Context) {
 
-    enum class ConsentState(name: String) {
-        CAN_SHOW_NON_PERSONALIZED_ADS("Can show non personalized ads"),
-        CAN_SHOW_PERSONALIZED_ADS("Can show non personalized ads");
-    }
-
-    fun getContentState(): ConsentState {
-        return when {
-            this.canShowPersonalizedAds() -> {
-                ConsentState.CAN_SHOW_PERSONALIZED_ADS
-            }
-            else -> {
-                ConsentState.CAN_SHOW_NON_PERSONALIZED_ADS
-            }
-        }
-    }
-
     fun isGDPR(): Boolean {
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         val gdpr = prefs.getInt("IABTCF_gdprApplies", 0)

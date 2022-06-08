@@ -1,7 +1,5 @@
 package com.patricecamousseigt.nfcsecure
 
-import android.app.ActivityManager
-import android.content.Context
 import android.content.Intent
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
@@ -28,7 +26,7 @@ import java.util.*
 
 
 class AdActivity : AppCompatActivity() {
-//TODO : improve the waiting time if no ad is loaded
+
     private lateinit var bindingActivity: AdActivityBinding
 
     private lateinit var bindingAdView: AdUnifiedBinding
@@ -41,7 +39,9 @@ class AdActivity : AppCompatActivity() {
 
     private var nativeAd: NativeAd? = null
 
-    private val WAITING_TIME = 5000 // 5 seconds
+    private val WAITING_TIME_MIN = 5000L // 5 seconds
+
+    private val WAITING_TIME_MAX = 10000L // 10 seconds
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +54,9 @@ class AdActivity : AppCompatActivity() {
 
         // loads the ad
         refreshAd()
+
+        // enable the nfc button after 10 sec to set a maximum waiting time for the user
+        enableNfcButton(WAITING_TIME_MAX, false)
 
         textViewWaiting = bindingActivity.textWaiting
         textViewWaiting.text = getText(R.string.thanks_for_waiting)
@@ -75,16 +78,18 @@ class AdActivity : AppCompatActivity() {
         }
     }
 
-    private fun enableNfcButton() {
+    private fun enableNfcButton(delay: Long = WAITING_TIME_MIN, onTickEnabled: Boolean = true) {
         // force user to watch the image during five seconds
-        val timer = object: CountDownTimer(WAITING_TIME.toLong(), 1000) {
+        val timer = object: CountDownTimer(delay, 1000) {
             override fun onTick(millisUntilFinished: Long) {
-                runOnUiThread {
-                    val secondsUntilFinished = millisUntilFinished.toInt() / 1000
-                    textViewWaiting.text =
-                        getString(R.string.thanks_for_waiting)
-                        .plus(" ")
-                        .plus(resources.getQuantityString(R.plurals.x_seconds, secondsUntilFinished, secondsUntilFinished))
+                if (onTickEnabled) {
+                    runOnUiThread {
+                        val secondsUntilFinished = millisUntilFinished.toInt() / 1000
+                        textViewWaiting.text =
+                            getString(R.string.thanks_for_waiting)
+                                .plus(" ")
+                                .plus(resources.getQuantityString(R.plurals.x_seconds, secondsUntilFinished, secondsUntilFinished))
+                    }
                 }
             }
 
