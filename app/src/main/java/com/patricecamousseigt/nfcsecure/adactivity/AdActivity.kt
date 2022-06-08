@@ -1,4 +1,4 @@
-package com.patricecamousseigt.nfcsecure
+package com.patricecamousseigt.nfcsecure.adactivity
 
 import android.content.Intent
 import com.google.android.gms.ads.AdRequest
@@ -19,13 +19,20 @@ import com.google.ads.mediation.admob.AdMobAdapter
 import com.google.android.gms.ads.VideoController.VideoLifecycleCallbacks
 import com.google.android.gms.ads.nativead.NativeAd.OnNativeAdLoadedListener
 import com.google.android.gms.ads.nativead.NativeAdOptions
+import com.patricecamousseigt.nfcsecure.GdprConsentManager
+import com.patricecamousseigt.nfcsecure.NfcService
+import com.patricecamousseigt.nfcsecure.notification.NotificationBuilder
+import com.patricecamousseigt.nfcsecure.R
 import com.patricecamousseigt.nfcsecure.databinding.AdUnifiedBinding
 import com.patricecamousseigt.nfcsecure.databinding.AdActivityBinding
+import com.patricecamousseigt.nfcsecure.repository.PrefRepository
 import com.patricecamousseigt.nfcsecure.util.Util.Companion.TAG
 import java.util.*
 
 
 class AdActivity : AppCompatActivity() {
+
+    private val prefRepository by lazy { PrefRepository(this) }
 
     private lateinit var bindingActivity: AdActivityBinding
 
@@ -34,8 +41,6 @@ class AdActivity : AppCompatActivity() {
     private lateinit var textViewWaiting: TextView
 
     private lateinit var disableNfcInspectorButton: Button
-
-    private val ADMOB_AD_UNIT_ID = "ca-app-pub-6749482233379426/7627036906"
 
     private var nativeAd: NativeAd? = null
 
@@ -68,7 +73,7 @@ class AdActivity : AppCompatActivity() {
         disableNfcInspectorButton.isEnabled = false
         disableNfcInspectorButton.setOnClickListener {
             // save the value in shared preferences
-            getSharedPreferences(SharedPrefsConst.NAME, MODE_PRIVATE)?.edit()?.putBoolean(SharedPrefsConst.ACTIVATION, false)?.apply()
+            prefRepository.setActivation(false)
             // stop the NFC inspector service
             stopService(Intent(this, NfcService::class.java))
             // remove all notifications displayed on the status bar
@@ -201,6 +206,7 @@ class AdActivity : AppCompatActivity() {
      *
      */
     private fun refreshAd() {
+        val ADMOB_AD_UNIT_ID = "ca-app-pub-6749482233379426/7627036906"
         val builder = AdLoader.Builder(this, ADMOB_AD_UNIT_ID)
         builder.forNativeAd(OnNativeAdLoadedListener {
                 nativeAd ->

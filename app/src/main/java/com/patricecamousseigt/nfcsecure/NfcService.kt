@@ -7,14 +7,11 @@ import android.os.IBinder
 import android.os.PowerManager
 import android.util.Log
 import android.nfc.NfcAdapter
-import androidx.core.content.getSystemService
-import com.patricecamousseigt.nfcsecure.NotificationBuilder.NotificationContent
+import com.patricecamousseigt.nfcsecure.notification.NotificationBuilder
+import com.patricecamousseigt.nfcsecure.notification.NotificationBuilder.NotificationContent
 import com.patricecamousseigt.nfcsecure.util.Util.Companion.TAG
 
-
 class NfcService: Service() {
-
-    private val FOREGROUND_ID = 1338
 
     private var wakeLock: PowerManager.WakeLock? = null
     private var nfcStateReceiver: NfcStateReceiver? = null
@@ -48,7 +45,8 @@ class NfcService: Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         // to avoid the service to be destroyed when app is killed
-        startForeground(FOREGROUND_ID, NotificationBuilder(applicationContext).builder(NotificationContent.NOTIFICATION_SERVICE_RUNNING))
+        val foregroundId = 1338
+        startForeground(foregroundId, NotificationBuilder(applicationContext).builder(NotificationContent.NOTIFICATION_SERVICE_RUNNING))
 
         // make sure the service is restarted if the system kills the service
         return START_STICKY

@@ -1,4 +1,4 @@
-package com.patricecamousseigt.nfcsecure
+package com.patricecamousseigt.nfcsecure.main
 
 import android.os.Bundle
 import android.util.Log
@@ -6,6 +6,7 @@ import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.*
 import com.google.android.ump.*
+import com.patricecamousseigt.nfcsecure.R
 import com.patricecamousseigt.nfcsecure.databinding.SettingsActivityBinding
 import com.patricecamousseigt.nfcsecure.util.Util.Companion.TAG
 

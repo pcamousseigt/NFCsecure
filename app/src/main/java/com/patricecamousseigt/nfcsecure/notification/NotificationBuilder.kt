@@ -1,4 +1,4 @@
-package com.patricecamousseigt.nfcsecure
+package com.patricecamousseigt.nfcsecure.notification
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -9,10 +9,8 @@ import android.content.Intent
 import android.os.Build
 import android.provider.Settings
 import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
-
-
+import com.patricecamousseigt.nfcsecure.R
+import com.patricecamousseigt.nfcsecure.main.SettingsActivity
 
 
 class NotificationBuilder(private val context: Context) {
@@ -30,6 +28,7 @@ class NotificationBuilder(private val context: Context) {
             NotificationContent.NOTIFICATION_SERVICE_RUNNING -> Intent(context, SettingsActivity::class.java)
             NotificationContent.NOTIFICATION_NFC -> Intent(Settings.ACTION_NFC_SETTINGS)
         }
+
         // the PendingIntent to launch our activity if the user selects this notification
         val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
@@ -37,7 +36,8 @@ class NotificationBuilder(private val context: Context) {
 
         val channelId = "NFC_NOTIFICATION"
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(channelId, "NFCsecure Inspector", NotificationManager.IMPORTANCE_HIGH)
+            val channelName = "NFCsecure Inspector"
+            val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH)
             notificationManager.createNotificationChannel(channel)
         }
 
@@ -55,17 +55,7 @@ class NotificationBuilder(private val context: Context) {
     }
 
     fun createNotification(notification: NotificationContent) {
-        // create builder and send the notification
-        when (notification) {
-            NotificationContent.NOTIFICATION_NFC -> {
-                val built = builder(NotificationContent.NOTIFICATION_NFC)
-                notificationManager.notify(NotificationContent.NOTIFICATION_NFC.id, built)
-            }
-            NotificationContent.NOTIFICATION_SERVICE_RUNNING -> {
-                val built = builder(NotificationContent.NOTIFICATION_SERVICE_RUNNING)
-                notificationManager.notify(NotificationContent.NOTIFICATION_SERVICE_RUNNING.id, built)
-            }
-        }
+        notificationManager.notify(notification.id, builder(notification))
     }
 
     fun cancelNotification() {

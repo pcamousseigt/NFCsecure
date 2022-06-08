@@ -1,16 +1,21 @@
-package com.patricecamousseigt.nfcsecure
+package com.patricecamousseigt.nfcsecure.main
 
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
+import com.patricecamousseigt.nfcsecure.adactivity.AdActivity
+import com.patricecamousseigt.nfcsecure.NfcService
+import com.patricecamousseigt.nfcsecure.R
+import com.patricecamousseigt.nfcsecure.repository.PrefRepository
 import com.patricecamousseigt.nfcsecure.util.Util.Companion.TAG
 import java.lang.Exception
 
 class SettingsFragment : PreferenceFragmentCompat() {
+
+    private val prefRepository by lazy { PrefRepository(requireContext()) }
 
     private var switchPreference: SwitchPreferenceCompat? = null
 
@@ -24,9 +29,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 // launch service or stop it depending on user's choice
                 if (activation) {
                     // save the value in shared preferences
-                    context?.getSharedPreferences(SharedPrefsConst.NAME,
-                        AppCompatActivity.MODE_PRIVATE
-                    )?.edit()?.putBoolean(SharedPrefsConst.ACTIVATION, activation)?.apply()
+                    prefRepository.setActivation(activation)
                     // start NFC inspector service
                     activity?.startService(Intent(activity, NfcService::class.java))
                 }
@@ -42,7 +45,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             try {
                 val duration = (newValue as String).toInt()
                 // save the value in shared preferences
-                context?.getSharedPreferences(SharedPrefsConst.NAME, AppCompatActivity.MODE_PRIVATE)?.edit()?.putInt(SharedPrefsConst.DURATION, duration)?.apply()
+                prefRepository.setDuration(duration)
             } catch (e: Exception) { Log.e(TAG, "Error : $e") }
             true
         }
@@ -52,14 +55,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         super.onResume()
         try {
             val serviceRunning = NfcService().isRunning(requireContext())
-            var switchChecked = context?.getSharedPreferences(SharedPrefsConst.NAME,
-                AppCompatActivity.MODE_PRIVATE)?.getBoolean(SharedPrefsConst.ACTIVATION, false)!!
-            if (!serviceRunning && switchChecked) {
-                switchChecked = serviceRunning
-                context?.getSharedPreferences(SharedPrefsConst.NAME, AppCompatActivity.MODE_PRIVATE)
-                    ?.edit()?.putBoolean(SharedPrefsConst.NAME, serviceRunning)?.apply()
-            }
-            switchPreference?.isChecked = switchChecked
+            val switchChecked = prefRepository.getActivation()
+            if (!serviceRunning && switchChecked) { prefRepository.setActivation(serviceRunning) }
+            switchPreference?.isChecked = serviceRunning
         } catch (e: Exception) { Log.e(TAG, "Error : $e") }
     }
 

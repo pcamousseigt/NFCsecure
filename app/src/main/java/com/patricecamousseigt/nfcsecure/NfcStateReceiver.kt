@@ -7,6 +7,8 @@ import android.nfc.NfcAdapter
 import android.util.Log
 import android.app.AlarmManager
 import android.app.PendingIntent
+import com.patricecamousseigt.nfcsecure.notification.NotificationReceiver
+import com.patricecamousseigt.nfcsecure.repository.PrefRepository
 import com.patricecamousseigt.nfcsecure.util.Util.Companion.TAG
 
 class NfcStateReceiver : BroadcastReceiver() {
@@ -26,8 +28,8 @@ class NfcStateReceiver : BroadcastReceiver() {
             NfcAdapter.STATE_TURNING_ON -> { Log.i(TAG, "Nfc state turning on.") }
             NfcAdapter.STATE_ON -> { Log.i(TAG, "Nfc state enabled.")
                 try {
-                    val duration = context?.getSharedPreferences(SharedPrefsConst.NAME, Context.MODE_PRIVATE)?.getInt(SharedPrefsConst.DURATION, 0)
-                    createNotificationIntent(context!!, duration!!)
+                    val duration = PrefRepository(context!!).getDuration()
+                    createNotificationIntent(context, duration)
                 } catch (e: Exception) { Log.e(TAG, "Error: $e.") }
             }
         }

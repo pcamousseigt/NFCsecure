@@ -17,7 +17,7 @@
         android:theme="@style/Theme.NFCsecure">
 
         <activity
-            android:name=".SettingsActivity"
+            android:name=".main.SettingsActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.NFCsecure">
@@ -28,7 +28,7 @@
         </activity>
         
         <activity
-            android:name=".AdActivity"
+            android:name=".adactivity.AdActivity"
             android:exported="false"
             android:label="@string/app_name"
             android:theme="@style/Theme.NFCsecure"
@@ -46,7 +46,7 @@
             android:value="true"/>
 
         <receiver
-            android:name=".NotificationReceiver"
+            android:name=".notification.NotificationReceiver"
             android:enabled="true"
             android:exported="false"/>
 
