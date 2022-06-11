@@ -5,7 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import com.patricecamousseigt.nfcsecure.repository.PrefRepository
 
 
-class SettingsViewModel(val app: Application): AndroidViewModel(app) {
+class SettingsFragmentViewModel(val app: Application): AndroidViewModel(app) {
 
     private val prefsRepository = PrefRepository(app)
 

@@ -42,14 +42,6 @@
             android:scaleType="fitCenter"
             android:contentDescription="@string/title_activity_settings"/>
 
-        <TextView
-            android:id="@+id/text_nfc_state"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"/>
-
     </RelativeLayout>
 
 </RelativeLayout>

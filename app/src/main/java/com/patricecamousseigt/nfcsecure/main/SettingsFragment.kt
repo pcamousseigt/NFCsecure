@@ -16,7 +16,7 @@ import java.lang.Exception
 class SettingsFragment : PreferenceFragmentCompat() {
 
     private val settingsViewModel by lazy {
-        ViewModelProvider(this, SettingsViewModelFactory(requireActivity().application)).get(SettingsViewModel::class.java)
+        ViewModelProvider(this, SettingsFragmentViewModelFactory(requireActivity().application)).get(SettingsFragmentViewModel::class.java)
     }
 
     private var switchPreference: SwitchPreferenceCompat? = null
