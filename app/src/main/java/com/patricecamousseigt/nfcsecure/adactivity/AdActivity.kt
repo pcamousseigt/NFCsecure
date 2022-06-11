@@ -5,7 +5,6 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.ads.nativead.NativeAd
@@ -15,6 +14,7 @@ import com.google.android.gms.ads.AdLoader
 import com.google.android.gms.ads.VideoOptions
 import com.google.android.gms.ads.nativead.NativeAdView
 import android.widget.*
+import androidx.lifecycle.ViewModelProvider
 import com.google.ads.mediation.admob.AdMobAdapter
 import com.google.android.gms.ads.VideoController.VideoLifecycleCallbacks
 import com.google.android.gms.ads.nativead.NativeAd.OnNativeAdLoadedListener
@@ -22,31 +22,25 @@ import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.patricecamousseigt.nfcsecure.GdprConsentManager
 import com.patricecamousseigt.nfcsecure.NfcService
 import com.patricecamousseigt.nfcsecure.notification.NotificationBuilder
-import com.patricecamousseigt.nfcsecure.R
 import com.patricecamousseigt.nfcsecure.databinding.AdUnifiedBinding
 import com.patricecamousseigt.nfcsecure.databinding.AdActivityBinding
-import com.patricecamousseigt.nfcsecure.repository.PrefRepository
 import com.patricecamousseigt.nfcsecure.util.Util.Companion.TAG
+import androidx.lifecycle.Observer
 import java.util.*
 
 
 class AdActivity : AppCompatActivity() {
 
-    private val prefRepository by lazy { PrefRepository(this) }
+    private val adViewModel by lazy {
+        ViewModelProvider(this, AdViewModelFactory(application)).get(AdViewModel::class.java)
+    }
 
     private lateinit var bindingActivity: AdActivityBinding
 
     private lateinit var bindingAdView: AdUnifiedBinding
 
-    private lateinit var textViewWaiting: TextView
-
-    private lateinit var disableNfcInspectorButton: Button
-
     private var nativeAd: NativeAd? = null
 
-    private val WAITING_TIME_MIN = 5000L // 5 seconds
-
-    private val WAITING_TIME_MAX = 10000L // 10 seconds
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,19 +55,31 @@ class AdActivity : AppCompatActivity() {
         refreshAd()
 
         // enable the nfc button after 10 sec to set a maximum waiting time for the user
-        enableNfcButton(WAITING_TIME_MAX, false)
+        adViewModel.enableNfcButtonInMaxDelay()
 
-        textViewWaiting = bindingActivity.textWaiting
-        textViewWaiting.text = getText(R.string.thanks_for_waiting)
-
+        // init the back button
         bindingActivity.back.setOnClickListener { finish() }
 
+        // The waiting text above the button
+        val textViewWaiting = bindingActivity.textWaiting
+        adViewModel.waitingText.observe(this@AdActivity, Observer {
+            val waitingText = it ?: return@Observer
+
+            textViewWaiting.text = waitingText
+        })
+
         // Create the disabling nfc button
-        disableNfcInspectorButton = bindingActivity.disableNfc
-        disableNfcInspectorButton.isEnabled = false
+        val disableNfcInspectorButton = bindingActivity.disableNfc
+        adViewModel.nfcInspectorButtonEnabled.observe(this@AdActivity, Observer {
+            val enabled = it ?: return@Observer
+
+            disableNfcInspectorButton.isEnabled = enabled
+
+            if (enabled) { bindingActivity.layoutWaiting.visibility = View.INVISIBLE }
+        })
         disableNfcInspectorButton.setOnClickListener {
             // save the value in shared preferences
-            prefRepository.setActivation(false)
+            adViewModel.setActivation(false)
             // stop the NFC inspector service
             stopService(Intent(this, NfcService::class.java))
             // remove all notifications displayed on the status bar
@@ -83,38 +89,12 @@ class AdActivity : AppCompatActivity() {
         }
     }
 
-    private fun enableNfcButton(delay: Long = WAITING_TIME_MIN, onTickEnabled: Boolean = true) {
-        // force user to watch the image during five seconds
-        val timer = object: CountDownTimer(delay, 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-                if (onTickEnabled) {
-                    runOnUiThread {
-                        val secondsUntilFinished = millisUntilFinished.toInt() / 1000
-                        textViewWaiting.text =
-                            getString(R.string.thanks_for_waiting)
-                                .plus(" ")
-                                .plus(resources.getQuantityString(R.plurals.x_seconds, secondsUntilFinished, secondsUntilFinished))
-                    }
-                }
-            }
-
-            override fun onFinish() {
-                runOnUiThread {
-                    bindingActivity.layoutWaiting.visibility = View.INVISIBLE
-                    disableNfcInspectorButton.isEnabled = true
-                }
-            }
-        }
-        timer.start()
-    }
-
     /**
      * Populates a [NativeAdView] object with data from a given [NativeAd].
      *
      * @param nativeAd the object containing the ad's assets
-     * @param adView the view to be populated
      */
-    private fun populateNativeAdView(nativeAd: NativeAd) {
+    private fun populateNativeAdView(nativeAd: NativeAd): Boolean {
         // Set the media view.
         bindingAdView.root.mediaView = bindingAdView.adMedia
 
@@ -183,7 +163,6 @@ class AdActivity : AppCompatActivity() {
         val vc = nativeAd.mediaContent!!.videoController
         // Updates the UI to say whether or not this ad has a video asset.
         if (vc.hasVideoContent()) {
-            enableNfcButton()
             // Create a new VideoLifecycleCallbacks object and pass it to the VideoController.
             // The VideoController will call methods on this object when events occur in the video lifecycle.
             vc.videoLifecycleCallbacks = object : VideoLifecycleCallbacks() {
@@ -194,10 +173,9 @@ class AdActivity : AppCompatActivity() {
                     super.onVideoEnd()
                 }
             }
-        } else {
-            // Ad does not contain a video asset
-            enableNfcButton()
+            return true
         }
+        return false
     }
 
     /**
@@ -206,8 +184,8 @@ class AdActivity : AppCompatActivity() {
      *
      */
     private fun refreshAd() {
-        val ADMOB_AD_UNIT_ID = "ca-app-pub-6749482233379426/7627036906"
-        val builder = AdLoader.Builder(this, ADMOB_AD_UNIT_ID)
+        val admobAdUnitId = "ca-app-pub-6749482233379426/7627036906"
+        val builder = AdLoader.Builder(this, admobAdUnitId)
         builder.forNativeAd(OnNativeAdLoadedListener {
                 nativeAd ->
                 // If this callback occurs after the activity is destroyed, you must call destroy and return or you may get a memory leak.
@@ -220,10 +198,10 @@ class AdActivity : AppCompatActivity() {
                 this@AdActivity.nativeAd = nativeAd
                 val frameLayout = bindingActivity.flAdPlaceholder
                 bindingAdView = AdUnifiedBinding.inflate(layoutInflater)
-                val adView = bindingAdView.root
                 populateNativeAdView(nativeAd)
                 frameLayout.removeAllViews()
-                frameLayout.addView(adView)
+                frameLayout.addView(bindingAdView.root)
+                adViewModel.enableNfcButton()
             })
 
         val videoOptions = VideoOptions.Builder().setStartMuted(false).build()
@@ -232,12 +210,12 @@ class AdActivity : AppCompatActivity() {
 
         // ad loader
         val adLoader = builder.withAdListener(object : AdListener() {
-                override fun onAdFailedToLoad(loadAdError: LoadAdError) {
-                    enableNfcButton()
-                    val error = String.format("domain: %s, code: %d, message: %s", loadAdError.domain, loadAdError.code, loadAdError.message)
-                    Log.e(TAG, "Failed to load native ad with error $error")
-                }
-            }).build()
+            override fun onAdFailedToLoad(loadAdError: LoadAdError) {
+                adViewModel.enableNfcButton()
+                val error = String.format("domain: %s, code: %d, message: %s", loadAdError.domain, loadAdError.code, loadAdError.message)
+                Log.e(TAG, "Failed to load native ad with error $error")
+            }
+        }).build()
 
         // ad request
         val adRequest = AdRequest.Builder()

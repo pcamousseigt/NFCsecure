@@ -13,7 +13,6 @@ class NotificationReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         // This method is called when the BroadcastReceiver is receiving an Intent broadcast.
-
         Log.i(TAG, "NotificationReceiver onReceive.")
 
         // check if the user has not disabled the nfc before sending a notification

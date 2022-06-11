@@ -17,8 +17,6 @@ class AutoStartup: BroadcastReceiver() {
             val intent = p1!!
             if (intent.action != null && intent.action.equals(Intent.ACTION_BOOT_COMPLETED)) {
                 val context = p0!!
-                /*val sharedPref = context.getSharedPreferences(SharedPrefsConst.PREF_NAME, AppCompatActivity.MODE_PRIVATE)
-                val activated = sharedPref.getBoolean(SharedPrefsConst.PREF_ACTIVATION, false)*/
                 val activated = PrefRepository(p0).getActivation()
                 if (activated) {
                     val nfcIntent = Intent(context, NfcService::class.java)
